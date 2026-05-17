@@ -1,0 +1,14 @@
+A criação do pdf da cotação deve ser feito da seguinte forma:
+O sistema deverá fazer uma cópia do arquivo Form_Proposta.docx, que está na pasta do projeto, substituindo:
+[data atual] - Alterar para a data atual
+Linhas [1][2][3] - Mostrar apenas se a opção escolhida for "quantidade de convidados"
+[tempo de ação calculada] - Alterar para o "tempo de ação" calculado
+[cidade escolhida] - Alterar para a "cidade" escolhida pelo usuário
+[tempo de ação] - Alterar para "tempo de ação" salvo na memória
+[valor pb] - Alterar para "valor PB calculado"
+[valor pb extenso] - Alterar para "Valor PB calculado" escrito por extenso
+[valor colorido] - Alterar para "Valor colorido" calculado
+[valor colorido extenso] - Alterar para "Valor colorido" por extenso
+[hash proposta] - Alterar para o código unico de proposta único salvo no arquivo no passo do cálculo
+
+após isso, o sistema deverá salvar o arquivo em pdf e disponibilizar para o cliente fazer o download

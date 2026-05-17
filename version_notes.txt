@@ -1,0 +1,30 @@
+	Funcionalidades:
+Calculo Santos
+Calculo São Paulo
+Calculo Outras cidades
+Calculo próximo ano
+Limitação de distancia
+Limitação de data do evento
+Demonstração da cotação
+Chamada Whatsapp
+Botão contratação
+PDF sendo gerado (modelo feio)
+Mensagem informando a sugestão do horário por quantidade de convidados
+Limite de horas por quantidade de convidados
+Criar botão na history para fazer o download em csv com filtro de periodo
+Incluir nome e contato no formulário
+Remover linhas sobre qtde de convidados da mensagem de contratação
+Migrar para Supabase (Insert - anon key - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwdW5ocWp3bG9va3R5dnJsZWVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MjM3MzEsImV4cCI6MjA5MzM5OTczMX0.Df5dFmacPRfJxdQUtP5y0hnnmufZoNbzkp3N1gAhoPI)
+Segurança para evitar input indevido de dados
+Remover dados da cotação futura
+Criar validação de telefone (numero minimo de digitos, trava para numeros repetidos)
+Criar caixa de dialogo no botão do Whatsapp (Tem duvidas ou seu evento não se encaixou nos moldes do site? Entre em contato conosco por aqui."
+Validar cidades faltantes (Guaruja, Osasco, Diadema)
+Criar cron (edge function)
+Adaptação da mensagem de recusa por distancia
+Bloqueio para quantidade de horas
+Alterar o carregamento do combo das cidades na tabela cidades do Supabase, trazendo apenas o nome
+History buscar as cotações no banco
+
+Nâo implementados:
+PDF no formato atual

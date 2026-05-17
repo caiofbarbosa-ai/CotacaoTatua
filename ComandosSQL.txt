@@ -1,0 +1,33 @@
+Historico de execuções do cron:
+select *
+from cron.job_run_details
+order by start_time desc
+limit 20;
+
+
+Criar CRON
+select
+cron.schedule(
+  'executar-funcao-diariamente',
+  '0 17 * * *',
+  $$
+  select
+    net.http_post(
+      url := 'https://spunhqjwlooktyvrleef.supabase.co/functions/v1/send-reminder-frontend',
+      headers := jsonb_build_object(
+        'Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwdW5ocWp3bG9va3R5dnJsZWVmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzgyMzczMSwiZXhwIjoyMDkzMzk5NzMxfQ.mN5PPVR7LW4eP63Xw4WcbwsY2OVuakWEHy8sGqqizOY',
+        'Content-Type', 'application/json'
+      ),
+      body := '{}'::jsonb
+    );
+  $$
+);
+
+LISTA FUNCOES
+select
+  n.nspname as schema,
+  p.proname as function_name,
+  pg_get_functiondef(p.oid) as definition
+from pg_proc p
+join pg_namespace n on p.pronamespace = n.oid
+where n.nspname not in ('pg_catalog', 'information_schema');

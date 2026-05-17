@@ -1,0 +1,130 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL')!,
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+)
+
+function formatCurrency(value: number | null) {
+  if (!value) return 'N/A'
+
+  return value.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  })
+}
+
+function formatarEmailLembrete(cotacoes: any[]) {
+  if (cotacoes.length === 0) {
+    return null
+  }
+
+  let html = `
+    <h1>Lembretes de Cotações</h1>
+    <p>Eventos com 60 dias para acontecer:</p>
+  `
+
+  cotacoes.forEach((c) => {
+    html += `
+      <div style="
+        border:1px solid #ccc;
+        padding:15px;
+        margin-bottom:10px;
+      ">
+        <h3>${c.codigo_cotacao}</h3>
+
+        <p><strong>Cliente:</strong> ${c.nome || 'N/A'}</p>
+
+        <p><strong>Telefone:</strong> ${c.telefone || 'N/A'}</p>
+
+        <p><strong>Cidade:</strong> ${c.cidade}</p>
+
+        <p>
+          <strong>Preço PB:</strong>
+          ${formatCurrency(c.price_pb)}
+        </p>
+
+        <p>
+          <strong>Preço Colorido:</strong>
+          ${formatCurrency(c.price_colorido)}
+        </p>
+
+        <a href="${c.whatsapp_link}">
+          WhatsApp
+        </a>
+      </div>
+    `
+  })
+
+  return html
+}
+
+Deno.serve(async () => {
+  try {
+    console.log('Buscando cotações...')
+
+    const { data: cotacoes, error } = await supabase
+      .rpc('buscar_cotacoes_60_dias')
+
+    if (error) {
+      throw error
+    }
+
+    console.log('Cotações encontradas:', cotacoes?.length || 0)
+
+    if (!cotacoes || cotacoes.length === 0) {
+      return Response.json({
+        success: true,
+        message: 'Nenhuma cotação encontrada'
+      })
+    }
+
+    const html = formatarEmailLembrete(cotacoes)
+
+    console.log('Chamando send-reminder-frontend...')
+
+    const response = await fetch(
+      `${Deno.env.get('SUPABASE_URL')}/functions/v1/send-reminder-frontend`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization':
+            `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwdW5ocWp3bG9va3R5dnJsZWVmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzgyMzczMSwiZXhwIjoyMDkzMzk5NzMxfQ.mN5PPVR7LW4eP63Xw4WcbwsY2OVuakWEHy8sGqqizOY`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          html,
+          subject:
+            `📅 Lembretes de Cotações - ${
+              new Date().toLocaleDateString('pt-BR')
+            }`
+        })
+      }
+    )
+
+    const result = await response.json()
+
+    if (!response.ok) {
+      throw new Error(JSON.stringify(result))
+    }
+
+    return Response.json({
+      success: true,
+      cotacoes: cotacoes.length,
+      result
+    })
+
+  } catch (err) {
+    console.error(err)
+
+    return Response.json(
+      {
+        success: false,
+        error: err.message
+      },
+      {
+        status: 500
+      }
+    )
+  }
+})

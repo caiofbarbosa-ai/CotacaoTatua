@@ -1,0 +1,4 @@
+Netlify
+Supabase
+Resend
+Z.AI

@@ -1,0 +1,16 @@
+select
+cron.schedule(
+  'executar-funcao-diariamente',
+  '10 18 * * *',
+  $$
+  select
+    net.http_post(
+      url := 'https://spunhqjwlooktyvrleef.supabase.co/functions/v1/send-reminder-cron',
+      headers := jsonb_build_object(
+        'Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwdW5ocWp3bG9va3R5dnJsZWVmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzgyMzczMSwiZXhwIjoyMDkzMzk5NzMxfQ.mN5PPVR7LW4eP63Xw4WcbwsY2OVuakWEHy8sGqqizOY',
+        'Content-Type', 'application/json'
+      ),
+      body := '{}'::jsonb
+    );
+  $$
+);

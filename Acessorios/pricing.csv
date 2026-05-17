@@ -1,0 +1,29 @@
+Cidade,Tipo,Tempo,Preco
+São Paulo,PB,2,2200.00
+São Paulo,PB,3,2500.00
+São Paulo,PB,4,2800.00
+São Paulo,PB,5,3100.00
+São Paulo,PB,6,3400.00
+São Paulo,PB,7,3800.00
+São Paulo,PB,8,4100.00
+São Paulo,Colorido,2,2500.00
+São Paulo,Colorido,3,2800.00
+São Paulo,Colorido,4,3100.00
+São Paulo,Colorido,5,3400.00
+São Paulo,Colorido,6,3800.00
+São Paulo,Colorido,7,4100.00
+São Paulo,Colorido,8,4500.00
+Santos,PB,2,2000.00
+Santos,PB,3,2300.00
+Santos,PB,4,2600.00
+Santos,PB,5,2900.00
+Santos,PB,6,3100.00
+Santos,PB,7,3400.00
+Santos,PB,8,3700.00
+Santos,Colorido,2,2300.00
+Santos,Colorido,3,2600.00
+Santos,Colorido,4,2900.00
+Santos,Colorido,5,3100.00
+Santos,Colorido,6,3400.00
+Santos,Colorido,7,3700.00
+Santos,Colorido,8,4000.00

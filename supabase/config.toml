@@ -1,0 +1,7 @@
+# Configuração do Supabase
+project_id = "spunhqjwlooktyvrleef"
+
+[functions.send-reminder-frontend]
+verify_jwt = false
+# Executa diariamente às 9h da manhã (formato cron)
+schedule = "0 9 * * *"

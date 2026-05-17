@@ -1,0 +1,90 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+
+// Configurações
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') || 're_YOUR_API_KEY_HERE'
+const RESEND_FROM_EMAIL = 'cotacoes@tatua.com.br'
+const REMINDER_EMAIL = 'tattootatua@gmail.com'
+
+// Função para enviar email via Resend
+async function enviarEmailResend(html: string, subject: string) {
+  if (RESEND_API_KEY === 're_YOUR_API_KEY_HERE') {
+    throw new Error('API Key do Resend não configurada')
+  }
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${RESEND_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: RESEND_FROM_EMAIL,
+      to: REMINDER_EMAIL,
+      subject: subject,
+      html: html
+    })
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(`Erro ao enviar email: ${errorData.message || response.status}`)
+  }
+
+  return await response.json()
+}
+
+// Handler principal
+serve(async (req) => {
+  // Configurar headers CORS
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+  }
+
+  try {
+    // Tratar requisição OPTIONS (preflight CORS)
+    if (req.method === 'OPTIONS') {
+      return new Response(
+        null,
+        { headers: corsHeaders, status: 200 }
+      )
+    }
+
+    // Apenas aceita POST
+    if (req.method !== 'POST') {
+      return new Response(
+        JSON.stringify({ success: false, message: 'Método não permitido' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 405 }
+      )
+    }
+
+    // Ler o corpo da requisição
+    const { html, subject } = await req.json()
+
+    if (!html) {
+      return new Response(
+        JSON.stringify({ success: false, message: 'HTML é obrigatório' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      )
+    }
+
+    console.log('Enviando email...')
+
+    const result = await enviarEmailResend(html, subject || 'Lembretes de Cotações')
+
+    console.log('Email enviado com sucesso:', result)
+
+    return new Response(
+      JSON.stringify({ success: true, message: 'Email enviado com sucesso', result }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+    )
+
+  } catch (error: any) {
+    console.error('Erro ao enviar email:', error)
+    return new Response(
+      JSON.stringify({ success: false, message: error.message || 'Erro ao enviar email' }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+    )
+  }
+})

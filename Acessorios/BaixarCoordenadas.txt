@@ -1,0 +1,42 @@
+import pandas as pd
+
+print("Baixando base de dados de coordenadas...")
+
+# URL de um repositório público com coordenadas de todas as cidades do Brasil (baseado em dados do IBGE)
+url = "https://raw.githubusercontent.com/kelvins/Municipios-Brasileiros/main/csv/municipios.csv"
+
+try:
+    # Ler o arquivo CSV direto da internet
+    df_completo = pd.read_csv(url)
+
+    # Filtrar apenas o estado de São Paulo (código UF 35)
+    # O formato das colunas pode variar, então ajustamos:
+    # Colunas comuns neste arquivo: 'nome', 'latitude', 'longitude', 'codigo_uf'
+    
+    df_sp = df_completo[df_completo['codigo_uf'] == 35].copy()
+
+    # Selecionar e renomear as colunas que interessam
+    df_final = df_sp[['nome', 'latitude', 'longitude']]
+    df_final.columns = ['Cidade', 'Latitude', 'Longitude']
+
+    # Resetar o índice para ficar organizado
+    df_final = df_final.sort_values(by='Cidade').reset_index(drop=True)
+
+    # Salvar em Excel e CSV
+    arquivo_excel = "cidades_sp_coordenadas.xlsx"
+    arquivo_csv = "cidades_sp_coordenadas.csv"
+
+    df_final.to_excel(arquivo_excel, index=False)
+    df_final.to_csv(arquivo_csv, index=False, sep=';', encoding='utf-8-sig')
+
+    print(f"\nSucesso! Arquivos gerados:")
+    print(f"- {arquivo_excel}")
+    print(f"- {arquivo_csv}")
+    print(f"\nTotal de cidades encontradas: {len(df_final)}")
+    
+    # Mostrar uma prévia no prompt
+    print("\nAmostra dos dados:")
+    print(df_final.head(10).to_string(index=False))
+
+except Exception as e:
+    print(f"Ocorreu um erro ao baixar ou processar os dados: {e}")

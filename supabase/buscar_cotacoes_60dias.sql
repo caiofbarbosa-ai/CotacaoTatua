@@ -1,0 +1,25 @@
+CREATE OR REPLACE FUNCTION public.buscar_cotacoes_60_dias()
+ RETURNS TABLE(codigo_cotacao text, nome text, telefone text, data_evento date, cidade text, action_time integer, price_pb numeric, price_colorido numeric, whatsapp_link text)
+ LANGUAGE sql
+AS $function$
+SELECT
+    c.codigo_cotacao,
+    c.nome,
+    c.telefone,
+    c.data_evento,
+    c.cidade,
+    c.action_time,
+    c.price_pb,
+    c.price_colorido,
+    -- Criar link do WhatsApp com mensagem formatada
+    'https://wa.me/55' ||
+    REGEXP_REPLACE(REGEXP_REPLACE(c.telefone, '[^0-9]', ''), '^(\d{2})(\d{5})(\d{4})$', '\1\2\3') ||
+    '?text=Olá%2C+falta+apenas+2+meses+para+seu+evento.+Vamos+deixa-lo+marcado+na+pele+dos+seus+convidados+para+sempre+(ou+até+o+próximo+banho)%3F' AS whatsapp_link
+FROM contatos c
+WHERE
+    c.data_evento >= CURRENT_DATE + INTERVAL '59 days' AND
+    c.data_evento <= CURRENT_DATE + INTERVAL '61 days' AND
+    c.telefone IS NOT NULL AND
+    c.telefone != ''
+ORDER BY c.data_evento ASC;
+$function$

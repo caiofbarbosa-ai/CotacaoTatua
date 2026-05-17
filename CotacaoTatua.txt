@@ -1,0 +1,50 @@
+Objetivo: Criar um site para que os clientes possam efetuar uma cotação para realização de tatuagem temporárias em um evento.
+Todos os arquivos referente a esse novo projeto deve ficar em uma nova pasta exclusiva. O site será publicado na internet para que os clientes tenham acesso. O site será composto de:
+1- Front end para inclusão dos dados necessários para solicitação da cotação
+2- Cálculo da cotação
+3- Front end para apresentação da cotação
+Todos os frontends precisam ter uma identidade visual escura com visual moderno e o logo no topo (C:\Users\Administrador\Downloads\tatua.png).
+
+1- Front end de solicitação da cotação:
+O site irá apresentar 3 campos para o cliente selecionar:
+1- Data - O cliente poderá digitar a data ou abrir uma caixa de diálogo para selecionar a data desejada
+2- Local - O cliente irá selecionar um caixa de diálogo que irá carregar todas as cidades do estado de São Paulo para selecionar a cidade desejada.
+3- Tempo de ação - O cliente irá selecionar um option button para selecionar entre "quantidade de convidados" ou "tempo de ação". Após escolher, o site irá abrir um campo para que ele digite o valor. Independente da opção escolhida, apenas números serão permitidos nesse campo.
+Ao final do preenchimento dos 3 campos, que são obrigatórios, a solicitação é encerrada e passa para o passo de cálculo da cotação.
+
+2- Cálculo da cotação.
+O cálculo será feito de acordo com as etapas:
+1- Caso a opção "tempo de ação" tenha sido escolhida, salvar na memória o valor digitado no campo numérico como "tempo de ação".
+2- Caso a opção "quantidade de convidados" tenha sido escolhida, validar o número digitado:
+a- Se for menor que 150, salvar na memória o valor 2 como "tempo de ação"
+b- Se for maior que 150, efetuar o cálculo - valor digitado menos 150 dividido por 60, arredondando para cima sem casas decimais.
+c- Soma 2 ao resultado dessa conta e salva na memória como "tempo de ação"
+1- Consultar se a cidade escolhida consta em um arquivo csv previamente preenchido com algumas cidades e os respectivos valores para preto e branco ou colorido de cada tempo de ação de cada cidade. Ex: São Paulo - PB - 2 - R$2.200,00. São Paulo - Colorido - 2 - R$2.500,00. Santos - PB - 2 - R$2.000,00. Crie o modelo do arquivo csv que melhor se encaixe na solução construída.
+2- Caso a cidade exista nesse arquivo, resgatar esses valores de preto e branco e de colorido para o tempo de ação salvo na memória e deixar guardado na memória como "valor final pb" e "valor final colorido".
+3- Se a cidade não constar nesse arquivo, o sistema deverá resgatar os valorer que constam para a cidade de São Paulo para preto e branco e colorido. Após isso, o sistema deverá calcular a distancia entre cidade escolhida e a Zona Sul da cidade de São Paulo. 
+4- Caso a cidade esteja a mais de 130 kilometros, salvar na memória que a cotação será recusada.
+5- Para cidades que não constem no arquivo mas que sejam a menos de 130 kilometros de distancia, o valor final será o valor de cada cor no tempo de ação salvo na memória para São Paulo somado a distancia calculada multiplicado por 9, como "valor final pb" e "valor final colorido"
+Ao final dessa etapa, passa o site para a próxima etapa, de apresentação da cotação.
+3- Front end de apresentação da cotação:
+Após termos os valores finais da cotação, o site deverá apresentar uma página com a cotação calculada e salvar essa cotação em um arquivo da seguinte forma:
+1- Salva os dados da cotação em um arquivo para termos o histórico de todas as cotações realizadas, com o seguinte formato:
+Código único da cotação (pode ser um hash)
+Data escolhida
+Cidade escolhida
+Option do tempo de ação escolhido
+Tempo de ação digitado
+Data e hora que a cotação foi realizada
+2- Apresentar ao cliente uma página com o mesmo formato do doc c:\users\downloads\form_proposta.docx, alterando os seguintes campos:
+[data atual] - Alterar para a data atual
+Linhas [1][2][3] - Mostrar apenas se a opção escolhida for "quantidade de convidados"
+[tempo de ação calculada] - Alterar para o "tempo de ação" calculado
+[cidade escolhida] - Alterar para a "cidade" escolhida pelo usuário
+[tempo de ação] - Alterar para "tempo de ação" salvo na memória
+[valor pb] - Alterar para "valor PB calculado"
+[valor pb extenso] - Alterar para "Valor PB calculado" escrito por extenso
+[valor colorido] - Alterar para "Valor colorido" calculado
+[valor colorido extenso] - Alterar para "Valor colorido" por extenso
+[hash proposta] - Alterar para o código unico de proposta único salvo no arquivo no passo do cálculo
+Habilitar um botão "download" para que o cliente possa baixar a cotação em formato pdf.
+Habilitar um botão "contratar" que, ao clicar, direciona para o Whatsapp no número (13)99784-8897 e enviando os dados da cotação realizada
+
