@@ -25,6 +25,6 @@ Adaptação da mensagem de recusa por distancia
 Bloqueio para quantidade de horas
 Alterar o carregamento do combo das cidades na tabela cidades do Supabase, trazendo apenas o nome
 History buscar as cotações no banco
+PDF no formato atual
 
 Nâo implementados:
-PDF no formato atual

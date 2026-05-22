@@ -299,3 +299,171 @@ option {
         padding: 20px;
     }
 }
+
+/* ============================================
+   PDF Document Styles (Professional Format)
+   ============================================ */
+
+.pdf-document {
+    background: #ffffff;
+    color: #333333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 40px;
+    max-width: 210mm;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* PDF Header */
+.pdf-header {
+    text-align: center;
+    border-bottom: 3px solid #333333;
+    padding-bottom: 30px;
+    margin-bottom: 40px;
+}
+
+.pdf-logo {
+    max-height: 80px;
+    width: auto;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pdf-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.pdf-subtitle {
+    font-size: 18px;
+    color: #666666;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+/* PDF Content */
+.pdf-content {
+    margin-bottom: 40px;
+}
+
+.pdf-section {
+    margin-bottom: 35px;
+}
+
+.pdf-section-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #cccccc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.pdf-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pdf-label {
+    font-weight: 600;
+    color: #555555;
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.pdf-value {
+    color: #333333;
+    font-size: 14px;
+    text-align: right;
+    flex: 1;
+}
+
+/* PDF Price Section */
+.pdf-price-section {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.pdf-price-option {
+    background: #f8f8f8;
+    border-left: 5px solid #333333;
+    padding: 25px;
+    border-radius: 5px;
+}
+
+.pdf-price-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.pdf-price {
+    font-size: 36px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.pdf-price-extenso {
+    font-size: 14px;
+    color: #666666;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* PDF Service Details */
+.pdf-service-details {
+    background: #f8f8f8;
+    padding: 25px;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+}
+
+.pdf-service-details p {
+    text-align: left;
+    color: #333333;
+    font-size: 14px;
+    line-height: 1.8;
+    margin: 0;
+}
+
+/* PDF Footer */
+.pdf-footer {
+    border-top: 2px solid #333333;
+    padding-top: 25px;
+    margin-top: 40px;
+    text-align: center;
+}
+
+.pdf-hash {
+    font-family: monospace;
+    font-size: 12px;
+    color: #999999;
+    background: #f0f0f0;
+    padding: 10px 20px;
+    display: inline-block;
+    border-radius: 3px;
+}
+
+/* PDF-specific optimizations for html2pdf */
+@media print {
+    .pdf-document {
+        background: #ffffff !important;
+        color: #333333 !important;
+    }
+}

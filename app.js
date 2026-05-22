@@ -310,6 +310,107 @@ function currencyToWords(value) {
     return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// Convert number to Portuguese extenso format
+function numberToExtenso(value) {
+    if (value === 0) return 'zero';
+
+    const units = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];
+    const teens = ['dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
+    const tens = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+    const hundreds = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
+
+    const below1000 = (num) => {
+        if (num === 0) return '';
+        if (num === 100) return 'cem';
+
+        let result = '';
+
+        if (num >= 100) {
+            result += hundreds[Math.floor(num / 100)] + ' ';
+            num %= 100;
+        }
+
+        if (num >= 20) {
+            result += tens[Math.floor(num / 10)];
+            if (num % 10 > 0) {
+                result += ' e ' + units[num % 10];
+            }
+        } else if (num >= 10) {
+            result += teens[num - 10];
+        } else if (num > 0) {
+            result += units[num];
+        }
+
+        return result.trim();
+    };
+
+    const below1000000 = (num) => {
+        if (num === 0) return '';
+
+        let result = '';
+
+        if (num >= 1000) {
+            const thousands = Math.floor(num / 1000);
+            if (thousands === 1) {
+                result += 'mil';
+            } else {
+                result += below1000(thousands) + ' mil';
+            }
+            num %= 1000;
+            if (num > 0) result += ' e ';
+        }
+
+        result += below1000(num);
+        return result;
+    };
+
+    const below1000000000 = (num) => {
+        if (num === 0) return '';
+
+        let result = '';
+
+        if (num >= 1000000) {
+            const millions = Math.floor(num / 1000000);
+            if (millions === 1) {
+                result += 'um milhão';
+            } else {
+                result += below1000(millions) + ' milhões';
+            }
+            num %= 1000000;
+            if (num > 0) result += ' e ';
+        }
+
+        result += below1000000(num);
+        return result;
+    };
+
+    const integerPart = Math.floor(value);
+    const decimalPart = Math.round((value - integerPart) * 100);
+
+    let result = '';
+
+    if (integerPart >= 1000000000) {
+        result += below1000(Math.floor(integerPart / 1000000000)) + ' bilhões';
+        const remainder = integerPart % 1000000000;
+        if (remainder > 0) result += ' e ' + below1000000000(remainder);
+    } else {
+        result = below1000000000(integerPart);
+    }
+
+    if (decimalPart > 0) {
+        result += ' reais e ' + below1000(decimalPart) + ' centavos';
+    } else {
+        result += ' reais';
+    }
+
+    return result.charAt(0).toUpperCase() + result.slice(1);
+}
+
+// Format price for extenso display
+function formatPriceExtenso(value) {
+    return numberToExtenso(value);
+}
+
 // Generate WhatsApp message
 function generateWhatsAppMessage(currentQuoteData) {
     const message = `*Cotação Tatuá*
@@ -797,69 +898,75 @@ function validarTelefone(telefone) {
     return { valido: true };
 }
 
-// Generate and download document using Word template (simplified placeholder)
-function generatePDF(currentQuoteData) {
+// Open HTML preview in new window
+async function generatePDF(currentQuoteData) {
+    if (!currentQuoteData) {
+        alert('Nenhuma cotação disponível para visualizar.');
+        return;
+    }
+
     // Show loading state
     const downloadBtn = document.getElementById('download-pdf');
     if (downloadBtn) {
         downloadBtn.disabled = true;
-        downloadBtn.textContent = 'Gerando documento...';
+        downloadBtn.textContent = 'Carregando...';
     }
 
-    // Simple PDF generation
-    const pdfContent = `
-===============================================
-PROPOSTA DE TATUAGENS TEMPORÁRIAS
-===============================================
+    try {
+        // Get base URL for absolute image paths
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
 
-Código: ${currentQuoteData.hash}
-Data: ${currentQuoteData.eventDate}
+        // Load the PDF template
+        const response = await fetch('pdf_template.html');
+        if (!response.ok) {
+            throw new Error('Erro ao carregar template');
+        }
 
-Cliente: ${currentQuoteData.clientName || 'Não informado'}
-Telefone: ${currentQuoteData.clientPhone || 'Não informado'}
+        let templateHTML = await response.text();
 
-Evento:
-- Cidade: ${currentQuoteData.city}
-- Data do Evento: ${currentQuoteData.eventDate}
-- Tempo de Ação: ${currentQuoteData.actionTime} horas
+        // Convert relative image paths to absolute URLs
+        templateHTML = templateHTML
+            .replace(/src="tatua1\.png"/g, `src="${baseUrl}tatua1.png"`)
+            .replace(/src="tatua_pg2\.jpg"/g, `src="${baseUrl}tatua_pg2.jpg"`)
+            .replace(/src="tatua_pg3\.jpg"/g, `src="${baseUrl}tatua_pg3.jpg"`)
+            .replace(/src="tatua2\.png"/g, `src="${baseUrl}tatua2.png"`);
 
-Valores:
-- Preto e Branco: ${formatCurrency(currentQuoteData.pricePB)}
-  ${currencyToWords(currentQuoteData.pricePB)} reais
-- Colorido: ${formatCurrency(currentQuoteData.priceColorido)}
-  ${currencyToWords(currentQuoteData.priceColorido)} reais
+        // Format current date
+        const currentDate = new Date().toLocaleDateString('pt-BR');
 
-${currentQuoteData.routeDetails || ''}
+        // Replace placeholders with actual data
+        templateHTML = templateHTML
+            .replace('[data atual]', currentDate)
+            .replace('[cidade escolhida]', currentQuoteData.city)
+            .replace('[tempo de ação]', currentQuoteData.actionTime + ' horas')
+            .replace('[valor pb]', formatCurrency(currentQuoteData.pricePB))
+            .replace('[valor pb extenso]', formatPriceExtenso(currentQuoteData.pricePB))
+            .replace('[valor colorido]', formatCurrency(currentQuoteData.priceColorido))
+            .replace('[valor colorido extenso]', formatPriceExtenso(currentQuoteData.priceColorido))
+            .replace('[hash proposta]', currentQuoteData.hash);
 
-${currentQuoteData.guestDetails || ''}
+        // Create Blob from HTML content
+        const blob = new Blob([templateHTML], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
 
-O SERVIÇO CONTEMPLA:
-- Criação das artes
-- 1 equipamento de impressão
-- Tinta e materiais
-- Tablet com desenhos
-- 2 funcionários
-- Duração: ${currentQuoteData.actionTime} horas
+        // Open new window with the populated template
+        const newWindow = window.open(url, '_blank');
 
-===============================================
-Gerado em: ${new Date().toLocaleString('pt-BR')}
-===============================================
-    `;
+        if (!newWindow) {
+            alert('O navegador bloqueou a janela. Por favor, permita pop-ups para este site.');
+            URL.revokeObjectURL(url);
+        }
 
-    // Download as text file for now
-    const blob = new Blob([pdfContent], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Proposta_${currentQuoteData.city}_${currentQuoteData.eventDate}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Erro ao abrir preview:', error);
+        alert('Erro ao abrir preview: ' + error.message);
+    }
 
     // Restore button
     if (downloadBtn) {
-        downloadBtn.disabled = false;
-        downloadBtn.textContent = 'Download Proposta';
+        setTimeout(() => {
+            downloadBtn.disabled = false;
+            downloadBtn.textContent = 'Download Proposta';
+        }, 500);
     }
 }
