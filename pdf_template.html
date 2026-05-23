@@ -20,7 +20,7 @@
         /* PDF Container - A4 size */
         .pdf-container {
             width: 210mm;
-            margin: 0 auto;
+            margin: 60px auto 0 auto;
             background: white;
         }
 
@@ -31,13 +31,7 @@
             height: 297mm;
             padding: 0;
             position: relative;
-            page-break-after: always;
-            page-break-inside: avoid;
             overflow: hidden;
-        }
-
-        .page:last-child {
-            page-break-after: auto;
         }
 
         /* Page 1 - Header Section */
@@ -89,7 +83,7 @@
         .full-page-image {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
             object-position: top;
         }
 
@@ -103,6 +97,8 @@
             color: white;
             min-height: 297mm;
             height: 297mm;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         .page-4 .tatua2-image {
@@ -215,28 +211,80 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        /* For html2pdf optimization */
-        @media print {
-            .download-bar {
-                display: none;
-            }
-            body {
-                margin: 0;
-            }
-            .page {
-                margin: 0;
-                page-break-after: always;
-            }
+        .download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Hide download bar when printing via html2pdf */
+        .hide-download-bar .download-bar {
+            display: none;
+        }
+
+        .hide-download-bar .pdf-container {
+            margin-top: 0;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        function downloadPDF() {
+            const btn = document.getElementById('download-btn');
+            const originalText = btn.textContent;
+
+            if (typeof html2pdf === 'undefined') {
+                alert('Erro: biblioteca PDF não carregada. Por favor, recarregue a página.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Gerando PDF...';
+
+            // Hide the download bar for PDF generation
+            document.body.classList.add('hide-download-bar');
+
+            const opt = {
+                margin: 0,
+                filename: `Proposta_${new Date().toISOString().split('T')[0]}.pdf`,
+                image: { type: 'jpeg', quality: 0.95 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true,
+                    allowTaint: true,
+                    logging: false
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                },
+                pagebreak: { mode: ['css', 'legacy'] }
+            };
+
+            html2pdf().set(opt).from(document.querySelector('.pdf-container')).save()
+                .then(() => {
+                    document.body.classList.remove('hide-download-bar');
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                })
+                .catch((error) => {
+                    console.error('Erro ao gerar PDF:', error);
+                    document.body.classList.remove('hide-download-bar');
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                    alert('Erro ao gerar PDF: ' + error.message);
+                });
+        }
+    </script>
 </head>
 <body>
     <!-- Download button bar -->
     <div class="download-bar">
-        <button class="download-btn" onclick="window.print()">Download PDF</button>
+        <button id="download-btn" class="download-btn" onclick="downloadPDF()">Download PDF</button>
     </div>
 
-    <div class="pdf-container" style="margin-top: 60px;">
+    <div class="pdf-container">
         <!-- Page 1: Header + Title + tatua1.png -->
         <div class="page page-1">
             <div class="current-date" id="current-date">
